@@ -5,11 +5,11 @@ const { User, UserDetail } = model;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const imgbbUploader = require("imgbb-uploader");
-var redis = require("redis");
-var JWTR = require("jwt-redis").default;
+const redis = require("redis");
+const JWTR = require("jwt-redis").default;
 //ES6 import JWTR from 'jwt-redis';
-var redisClient = redis.createClient();
-var jwtr = new JWTR(redisClient);
+const redisClient = redis.createClient();
+const jwtr = new JWTR(redisClient);
 
 module.exports = {
   register: async (req, res) => {
@@ -99,22 +99,12 @@ module.exports = {
   },
   logout: async (req, res) => {
     try {
-      const auth = await req.headers.authorization;
-      const token = await auth.split(" ")[1];
-      console.log(token)
-      await jwtr.destroy(token);
-
-      res.status(201).json({
-        message: "Logout Success",
-      });
+      res.cookie("secret", "", { maxAge: 1 });
+      res.status(200).json({ message: "logout successfully" });
     } catch (error) {
-      res.status(400).json({ message: error });
+      res.status(401).json({
+        message: "logout failed",
+      });
     }
-
-    // const verified = jwt.verify(token, process.env.JWTKEY)
-
-    // if(verified) {
-
-    // }
   },
 };
