@@ -4,7 +4,7 @@ const multer = require("multer");
 
 const authRouter = express.Router();
 
-const { register, login, logout } = require("../controllers/auth.controller");
+const { register, login, /* logout */ } = require("../controllers/auth.controller");
 
 authRouter.post(
   "/register",
@@ -36,6 +36,6 @@ authRouter.post(
 
 authRouter.post("/login", login);
 
-authRouter.delete("/logout", logout);
+// authRouter.delete("/logout", logout);
 
 module.exports = authRouter;

@@ -97,14 +97,14 @@ module.exports = {
       res.status(400).json({ message: error });
     }
   },
-  logout: async (req, res) => {
-    try {
-      res.cookie("secret", "", { maxAge: 1 });
-      res.status(200).json({ message: "logout successfully" });
-    } catch (error) {
-      res.status(401).json({
-        message: "logout failed",
-      });
-    }
-  },
+  // logout: async (req, res) => {
+  //   try {
+  //     res.cookie("secret", "", { maxAge: 1 });
+  //     res.status(200).json({ message: "logout successfully" });
+  //   } catch (error) {
+  //     res.status(401).json({
+  //       message: "logout failed",
+  //     });
+  //   }
+  // },
 };
