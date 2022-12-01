@@ -9,13 +9,13 @@ const imgbbUploader = require('imgbb-uploader')
 
 module.exports = {
     getAllUser: async(req, res) => {
-        // const auth = await req.headers.authorization
-        // const token = await auth.split(" ")[1]
+        const auth = await req.headers.authorization
+        const token = await auth.split(" ")[1]
 
-        // const verified = jwt.verify(token, process.env.JWTKEY)
+        const verified = jwt.verify(token, process.env.JWTKEY)
 
-        // if (verified){
-        //     if (verified.id == 1){
+        if (verified){
+            if (verified.id == 1){
                 const users = await UserDetail.findAll({
                     include: [{
                         model: User,
@@ -32,19 +32,14 @@ module.exports = {
                         }
                     }
                 })
-
-                if (users){
-                    res.status(200).json({users})
-                } else {
-                    res.sttus(204).json({message: "No Users Found"})
-                }
         
-        //     } else {
-        //         res.status(401).json({message: "Admin Only"})
-        //     }
-        // } else {
-        //     res.status(401).json({message: "Unauthorized"})
-        // }
+                res.status(200).json({users})
+            } else {
+                res.status(401).json({message: "Admin Only"})
+            }
+        } else {
+            res.status(401).json({message: "Unauthorized"})
+        }
     },
 
     updateUserById: async(req, res) => {
