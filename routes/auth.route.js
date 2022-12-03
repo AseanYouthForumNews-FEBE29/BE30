@@ -4,7 +4,7 @@ const multer = require("multer");
 
 const authRouter = express.Router();
 
-const { register, login /* logout */ } = require("../controllers/auth.controller");
+const { register, login } = require("../controllers/auth.controller");
 
 authRouter.post(
   "/register",

@@ -5,11 +5,7 @@ const { User, UserDetail } = model;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const imgbbUploader = require("imgbb-uploader");
-const redis = require("redis");
-const JWTR = require("jwt-redis").default;
-//ES6 import JWTR from 'jwt-redis';
-const redisClient = redis.createClient();
-const jwtr = new JWTR(redisClient);
+
 
 module.exports = {
   register: async (req, res) => {
@@ -97,14 +93,4 @@ module.exports = {
       res.status(400).json({ message: error });
     }
   },
-  // logout: async (req, res) => {
-  //   try {
-  //     res.cookie("secret", "", { maxAge: 1 });
-  //     res.status(200).json({ message: "logout successfully" });
-  //   } catch (error) {
-  //     res.status(401).json({
-  //       message: "logout failed",
-  //     });
-  //   }
-  // },
 };
