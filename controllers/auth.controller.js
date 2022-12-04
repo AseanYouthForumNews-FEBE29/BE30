@@ -72,7 +72,7 @@ module.exports = {
               isAdmin: userData.isAdmin,
             },
             process.env.JWTKEY,
-            { expiresIn: "1h" }
+            { expiresIn: "1d" }
           );
 
           res.status(201).json({
