@@ -52,7 +52,7 @@ module.exports = {
         }
     },
 
-    readUserById: async(req, res) => {
+    getUserById: async(req, res) => {
         const auth = await req.headers.authorization
       
         if (auth){
