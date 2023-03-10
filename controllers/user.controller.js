@@ -52,64 +52,49 @@ module.exports = {
         }
     },
 
-    getUserById: async(req, res) => {
+    readUserById: async(req, res) => {
         const auth = await req.headers.authorization
-
+      
         if (auth){
-            const token = await auth.split(" ")[1]
-    
-            const verified = jwt.verify(token, process.env.JWTKEY)
-    
-            if(verified){
-    
-                const uploaded_image = await req.file
-                const name_uploaded_image = uploaded_image.originalname.split(".")[0]+ '-' + new Date().getTime()
-    
-                const options = {
-                    apiKey: process.env.IMGBBKEY,
-                    name: name_uploaded_image,
-                    base64string: uploaded_image.buffer.toString('base64')
+          const token = await auth.split(" ")[1]
+      
+          const verified = jwt.verify(token, process.env.JWTKEY)
+      
+          if(verified){
+            const data = await User.findOne({
+              where: { id: verified.id },
+              include: [
+                {
+                  model: UserDetail,
+                  attributes: ['fullName', 'Image', 'countryId']
                 }
-    
-                const response = await imgbbUploader(options)
-                    .then((res) => {
-                        return res.url
-                    }
-                )
-    
-                const data = await req.body
-                const saltRounds = 10
-    
-                const hash = bcrypt.hashSync(data.password, saltRounds)
-                data.password = hash
-                
-                await User.findAll({
-                    email: data.email,
-                    password: data.password
-                }, {
-                    where: {
-                        id: verified.id
-                    }
-                })
-    
-                await UserDetail.findAll({
-                    fullName: data.fullName,
-                    Image: response,
-                    countryId : data.countryId
-                }, {
-                    where: {
-                        userId: verified.id
-                    }
-                })
-    
-                res.status(201).json({message: "get user by id success"})
+              ]
+            })
+      
+            if (data) {
+              res.status(200).json({
+                success: true,
+                data
+              })
             } else {
-                res.status(401).json({message: "Unauthorized"})
+              res.status(404).json({
+                success: false,
+                message: "User not found"
+              })
             }
+          } else {
+            res.status(401).json({
+              success: false,
+              message: "Unauthorized"
+            })
+          }
         } else {
-            res.status(401).json({message: "Token Required"})
+          res.status(401).json({
+            success: false,
+            message: "Token Required"
+          })
         }
-    },
+      },
 
     updateUserById: async(req, res) => {
         const auth = await req.headers.authorization
@@ -120,6 +105,27 @@ module.exports = {
             const verified = jwt.verify(token, process.env.JWTKEY)
     
             if(verified){
+
+                const data = await User.findOne({
+                    where : {id : verified.id},
+                    include : [
+                        {
+                            model : UserDetail,
+                            attributes : ['fullName', "image", "countryId"]
+                        }
+                    ]
+                })
+
+                if(data) {
+                    res.status(200).json({
+                        success : true
+                    })
+                } else {
+                    res.status(404).json({
+                        success : false,
+                        message : "user not found"
+                    })
+                }
     
                 const uploaded_image = await req.file
                 const name_uploaded_image = uploaded_image.originalname.split(".")[0]+ '-' + new Date().getTime()
@@ -136,7 +142,7 @@ module.exports = {
                     }
                 )
     
-                const data = await req.body
+                // const data = await req.body
                 const saltRounds = 10
     
                 const hash = bcrypt.hashSync(data.password, saltRounds)
