@@ -12,7 +12,7 @@ const router = require("./routes");
 
 const corsConfig = {
   credentials: true,
-  orgin: "*",
+  origin: "*",
 };
 
 app.use(express.json());
