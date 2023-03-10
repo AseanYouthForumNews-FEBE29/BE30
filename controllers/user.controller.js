@@ -83,7 +83,7 @@ module.exports = {
                 const hash = bcrypt.hashSync(data.password, saltRounds)
                 data.password = hash
                 
-                await User.findOne({
+                await User.findAll({
                     email: data.email,
                     password: data.password
                 }, {
@@ -92,7 +92,7 @@ module.exports = {
                     }
                 })
     
-                await UserDetail.findOne({
+                await UserDetail.findAll({
                     fullName: data.fullName,
                     Image: response,
                     countryId : data.countryId
