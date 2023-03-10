@@ -6,8 +6,8 @@ const userRouter = express.Router()
 
 const { getAllUser, getUserById ,updateUserById,  } = require('../controllers/user.controller')
 
-userRouter.get('/', getAllUser)
-userRouter.get('/detail', getUserById)
+userRouter.get('/all', getAllUser)
+userRouter.get('/', getUserById)
 userRouter.put('/', multer().single("image"), [
     check("email")
         .isEmail()
