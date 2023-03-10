@@ -14,9 +14,16 @@ const router = require("./routes");
 
 app.use(express.json());
 
-app.use(cors({
-    origin: '*'
-}));
+const corsConfig = {
+    credentials: true,
+}
+
+app.use(cors(corsConfig))
+app.options("*", cors(corsConfig))
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Credentials", "true")
+    next()
+})
 
 app.use(router);
 
