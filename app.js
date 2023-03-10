@@ -10,21 +10,18 @@ const PORT = process.env.PORT;
 
 const router = require("./routes");
 
-
-
-
-
 const corsConfig = {
-    credentials: true,
-}
+  credentials: true,
+  origin: 'http://localhost:5173'
+};
 
 app.use(express.json());
 
-app.use(cors(corsConfig))
+app.use(cors(corsConfig));
 app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Credentials", "true")
-    next()
-})
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
 
 app.use(router);
 
