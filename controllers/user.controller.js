@@ -73,25 +73,19 @@ module.exports = {
         });
 
         if (data) {
-          res.status(200).json({
-            success: true,
-            data,
-          });
+          res.status(200).json({data});
         } else {
           res.status(404).json({
-            success: false,
-            message: "User not found",
+            message: "User not found"
           });
         }
       } else {
         res.status(401).json({
-          success: false,
           message: "Unauthorized",
         });
       }
     } else {
       res.status(401).json({
-        success: false,
         message: "Token Required",
       });
     }
