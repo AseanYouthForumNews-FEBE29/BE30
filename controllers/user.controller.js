@@ -94,7 +94,8 @@ module.exports = {
     
                 await UserDetail.update({
                     fullName: data.fullName,
-                    Image: response
+                    Image: response,
+                    countryId : data.countryId
                 }, {
                     where: {
                         userId: verified.id
