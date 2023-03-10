@@ -12,11 +12,13 @@ const router = require("./routes");
 
 
 
-app.use(express.json());
+
 
 const corsConfig = {
     credentials: true,
 }
+
+app.use(express.json());
 
 app.use(cors(corsConfig))
 app.use(function (req, res, next) {
