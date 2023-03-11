@@ -99,8 +99,8 @@ module.exports = {
       const verified = jwt.verify(token, process.env.JWTKEY);
 
       if (verified) {
-
         const uploaded_image = await req.file;
+
         if (uploaded_image == null) {
           res.status(422).json({ message: "Missing Image Value" });
         } else {
@@ -148,9 +148,8 @@ module.exports = {
               },
             }
           );
+          res.status(201).json({ message: "Update success" });
         }
-
-        res.status(201).json({ message: "Update success" });
       } else {
         res.status(401).json({ message: "Unauthorized" });
       }
