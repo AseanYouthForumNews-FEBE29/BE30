@@ -73,10 +73,10 @@ module.exports = {
         });
 
         if (data) {
-          res.status(200).json({data});
+          res.status(200).json({ data });
         } else {
           res.status(404).json({
-            message: "User not found"
+            message: "User not found",
           });
         }
       } else {
@@ -101,6 +101,8 @@ module.exports = {
 
       if (verified) {
         const uploaded_image = await req.file;
+
+
         const name_uploaded_image =
           uploaded_image.originalname.split(".")[0] +
           "-" +
@@ -116,6 +118,8 @@ module.exports = {
           return res.url;
         });
 
+
+        console.log(response)
         const data = await req.body;
         const saltRounds = 10;
 
@@ -138,6 +142,7 @@ module.exports = {
           {
             fullName: data.fullName,
             Image: response,
+
           },
           {
             where: {
