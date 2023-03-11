@@ -101,55 +101,54 @@ module.exports = {
 
       if (verified) {
         const uploaded_image = await req.file;
+        if (uploaded_image == null) {
+          res.status(422).json({ message: "Missing Image Value" });
+        } else {
+          const name_uploaded_image =
+            (await uploaded_image.originalname.split(".")[0]) +
+            "-" +
+            new Date().getTime();
 
+          const options = {
+            apiKey: process.env.IMGBBKEY,
+            name: name_uploaded_image,
+            base64string: uploaded_image.buffer.toString("base64"),
+          };
 
-        const name_uploaded_image =
-          uploaded_image.originalname.split(".")[0] +
-          "-" +
-          new Date().getTime();
+          const response = await imgbbUploader(options).then((res) => {
+            return res.url;
+          });
 
-        const options = {
-          apiKey: process.env.IMGBBKEY,
-          name: name_uploaded_image,
-          base64string: uploaded_image.buffer.toString("base64"),
-        };
+          const data = await req.body;
+          const saltRounds = 10;
 
-        const response = await imgbbUploader(options).then((res) => {
-          return res.url;
-        });
+          const hash = bcrypt.hashSync(data.password, saltRounds);
+          data.password = hash;
 
-
-        console.log(response)
-        const data = await req.body;
-        const saltRounds = 10;
-
-        const hash = bcrypt.hashSync(data.password, saltRounds);
-        data.password = hash;
-
-        await User.update(
-          {
-            email: data.email,
-            password: data.password,
-          },
-          {
-            where: {
-              id: verified.id,
+          await User.update(
+            {
+              email: data.email,
+              password: data.password,
             },
-          }
-        );
+            {
+              where: {
+                id: verified.id,
+              },
+            }
+          );
 
-        await UserDetail.update(
-          {
-            fullName: data.fullName,
-            Image: response,
-
-          },
-          {
-            where: {
-              userId: verified.id,
+          await UserDetail.update(
+            {
+              fullName: data.fullName,
+              Image: response,
             },
-          }
-        );
+            {
+              where: {
+                userId: verified.id,
+              },
+            }
+          );
+        }
 
         res.status(201).json({ message: "Update success" });
       } else {
