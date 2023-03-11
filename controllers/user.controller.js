@@ -96,10 +96,10 @@ module.exports = {
 
     if (auth) {
       const token = await auth.split(" ")[1];
-
       const verified = jwt.verify(token, process.env.JWTKEY);
 
       if (verified) {
+
         const uploaded_image = await req.file;
         if (uploaded_image == null) {
           res.status(422).json({ message: "Missing Image Value" });
@@ -140,7 +140,7 @@ module.exports = {
           await UserDetail.update(
             {
               fullName: data.fullName,
-              Image: response,
+              image: response,
             },
             {
               where: {
