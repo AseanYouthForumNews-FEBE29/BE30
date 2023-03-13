@@ -1,7 +1,7 @@
 const model = require("../models");
 require("dotenv").config();
 
-const { User, UserDetail, Country, Category } = model;
+const { User, UserDetail, Country } = model;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
@@ -66,14 +66,11 @@ module.exports = {
           where: { id: verified.id },
           include: [
             {
-              model: User,
-              include: [UserDetail],
-            },
-            {
-              model: Country,
-            },
-            {
-              model: Category,
+              model: UserDetail,
+              attributes: ["fullName", "image", "countryId"],
+              include : {
+                model : Country,
+              }
             },
           ],
         });
