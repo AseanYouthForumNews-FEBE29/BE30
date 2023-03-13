@@ -66,13 +66,8 @@ module.exports = {
           where: { id: verified.id },
           include: [
             {
-              
-              Model : UserDetail,
-              attributes: 
-                ["fullName", "image", "countryId"],
-            },
-            {
-              model: Country,
+              Model: UserDetail,
+              attributes: ["fullName", "image", "countryId"],
             },
           ],
         });
