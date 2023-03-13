@@ -67,9 +67,6 @@ module.exports = {
           include: [
             {
               model: User,
-              attributes: {
-                exclude: ["password"],
-              },
               include: [UserDetail],
             },
             {
