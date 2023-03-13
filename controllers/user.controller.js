@@ -69,6 +69,9 @@ module.exports = {
               model: UserDetail,
               attributes: ["fullName", "image", "countryId"],
             },
+            {
+              model: Country,
+            }
           ],
         });
 
