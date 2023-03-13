@@ -70,7 +70,7 @@ module.exports = {
               attributes: ["fullName", "image", "countryId"],
             },
             {
-              model, Country,
+              model : Country,
             }
           ],
         });
