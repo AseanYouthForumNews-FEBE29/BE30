@@ -1,7 +1,7 @@
 const model = require("../models");
 require("dotenv").config();
 
-const { User, UserDetail, Country } = model;
+const { User, UserDetail, Country, Category } = model;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
