@@ -67,7 +67,7 @@ module.exports = {
           include: [
             {
               model: UserDetail,
-              attributes: ["fullName", "Image", "countryId"],
+              attributes: ["fullName", "image", "countryId"],
             },
           ],
         });
