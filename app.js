@@ -11,6 +11,7 @@ const PORT = process.env.PORT;
 const router = require("./routes");
 
 const corsConfig = {
+  origin : "*",
   credentials: true,
 };
 
