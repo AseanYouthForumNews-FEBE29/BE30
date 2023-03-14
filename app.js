@@ -2,6 +2,7 @@
 //update
 const express = require("express");
 const cors = require("cors");
+const bodyParser = require('body-parser');
 require("dotenv").config();
 
 const app = express();
@@ -15,8 +16,8 @@ const corsConfig = {
   credentials: true,
 };
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(cors(corsConfig));
 app.use(function (req, res, next) {
