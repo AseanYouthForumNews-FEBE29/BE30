@@ -15,6 +15,7 @@ const corsConfig = {
   credentials: true,
 };
 
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.use(cors(corsConfig));
