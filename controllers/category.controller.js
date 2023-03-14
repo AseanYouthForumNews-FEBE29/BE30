@@ -53,7 +53,7 @@ module.exports = {
       const token = auth.split(" ")[1];
       const verified = jwt.verify(token, process.env.JWTKEY);
 
-      if (verified && verified.isAdmin) {
+      if (verified && verified.isAdmin == true) {
         if (req.body && req.body.name) {
           const duplicate = await Category.findOne({
             where: {
