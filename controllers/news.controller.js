@@ -458,19 +458,31 @@ module.exports = {
   },
 
   addLikeToNews: async (req, res) => {
-    const id = req.params.id;
-    await News.update(
-      {
-        total_like: sequelize.literal("total_like + 1"),
-      },
-      {
-        where: {
-          id: id,
-        },
-      }
-    );
+    const auth = req.headers.authorization;
 
-    res.status(200).json({ message: "News liked" });
+    if (auth) {
+      const id = req.params.id;
+      const token = await auth.split(" ")[1];
+      const verified = jwt.verify(token, process.env.JWTKEY);
+
+      if (verified) {
+        await News.update(
+          {
+            total_like: sequelize.literal("total_like + 1"),
+          },
+          {
+            where: {
+              id: id,
+            },
+          }
+        );
+        res.status(200).json({ message: "News liked" });
+      } else {
+        res.status(401).json({ message: "Unauthorized" });
+      }
+    } else {
+      res.status(401).json({ message: "Token Required" });
+    }
   },
 
   searchNewsByTitle: async (req, res) => {
