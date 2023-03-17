@@ -457,25 +457,37 @@ module.exports = {
     res.status(200).json(news);
   },
 
-  addLikeToNews: async (req, res) => {
-    const auth = await req.headers.authorization;
+  addLikeToNews : async (req, res) => {
+    const auth = req.headers.authorization;
     if (auth) {
-      const id = await req.params.id;
-      const token = await auth.split(" ")[1];
+      const id = req.params.id;
+      const token = auth.split(" ")[1];
       const verified = jwt.verify(token, process.env.JWTKEY);
-
       if (verified) {
-        await News.update(
-          {
-            total_like: sequelize.literal("total_like + 1"),
-          },
-          {
-            where: {
-              id: id,
-            },
+        const news = await News.findOne({ where: { id } });
+        if (news) {
+          let newTotalLike = news.total_like;
+          if (req.body.like) { 
+            if (!news.likes.includes(verified.id)) { 
+              newTotalLike++;
+              await news.update({ likes: [...news.likes, verified.id], total_like: newTotalLike }); 
+              res.status(200).json({ message: "News liked" });
+            } else { 
+              res.status(400).json({ message: "You have already liked this news" });
+            }
+          } else { 
+            if (news.likes.includes(verified.id)) { 
+              newTotalLike--;
+              const newLikes = news.likes.filter(like => like !== verified.id); 
+              await news.update({ likes: newLikes, total_like: newTotalLike }); 
+              res.status(200).json({ message: "News unliked" });
+            } else { 
+              res.status(400).json({ message: "You haven't liked this news yet" });
+            }
           }
-        );
-        res.status(200).json({ message: "News liked" });
+        } else {
+          res.status(404).json({ message: "News not found" });
+        }
       } else {
         res.status(401).json({ message: "Unauthorized" });
       }
