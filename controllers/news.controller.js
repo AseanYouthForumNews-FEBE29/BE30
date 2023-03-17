@@ -458,10 +458,9 @@ module.exports = {
   },
 
   addLikeToNews: async (req, res) => {
-    const auth = req.headers.authorization;
-
+    const auth = await req.headers.authorization;
     if (auth) {
-      const id = req.params.id;
+      const id = await req.params.id;
       const token = await auth.split(" ")[1];
       const verified = jwt.verify(token, process.env.JWTKEY);
 
