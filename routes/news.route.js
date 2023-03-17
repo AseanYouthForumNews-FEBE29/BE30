@@ -42,7 +42,7 @@ newsRouter.get('/detail/:id', getNewsById)
 newsRouter.get('/all/trend', getAllNewsByTrend)
 newsRouter.get('/all/country/:id', getAllNewsByCountry)
 newsRouter.get('/all/category/:id', getAllNewsByCategory)
-newsRouter.get('/like/:id', addLikeToNews)
+newsRouter.put('/like/:id', addLikeToNews)
 newsRouter.get('/search', searchNewsByTitle)
 
 // Admin and Creator Only
