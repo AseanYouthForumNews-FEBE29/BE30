@@ -140,9 +140,10 @@ module.exports = {
         if (news.userId == verified.id) {
           const uploaded_image = await req.file;
 
-          if (uploaded_image == null) {
-            res.status(422).json({ message: "Missing Image Value" });
-          } else {
+          const data = await req.body;
+          let image = await news.image;
+
+          if (uploaded_image) {
             const name_uploaded_image =
               (await uploaded_image.originalname.split(".")[0]) +
               "-" +
@@ -154,29 +155,65 @@ module.exports = {
               base64string: uploaded_image.buffer.toString("base64"),
             };
 
-            const response = await imgbbUploader(options).then((res) => {
+            let image = await imgbbUploader(options).then((res) => {
               return res.url;
             });
-
-            const data = await req.body;
-
-            await News.update(
-              {
-                title: data.title,
-                content: data.content,
-                summary: data.summary,
-                image: response,
-                categoryId: data.categoryId,
-              },
-              {
-                where: {
-                  id: id,
-                },
-              }
-            );
-
-            res.status(201).json({ message: "News updated" });
           }
+
+          await News.update(
+            {
+              title: data.title,
+              content: data.content,
+              summary: data.summary,
+              image: image,
+              categoryId: data.categoryId,
+            },
+            {
+              where: {
+                id: id,
+              },
+            }
+          );
+
+          res.status(201).json({ message: "News updated" });
+
+          // if (uploaded_image == null) {
+          //   res.status(422).json({ message: "Missing Image Value" });
+          // } else {
+          //   const name_uploaded_image =
+          //     (await uploaded_image.originalname.split(".")[0]) +
+          //     "-" +
+          //     new Date().getTime();
+
+          //   const options = {
+          //     apiKey: process.env.IMGBBKEY,
+          //     name: name_uploaded_image,
+          //     base64string: uploaded_image.buffer.toString("base64"),
+          //   };
+
+          //   const response = await imgbbUploader(options).then((res) => {
+          //     return res.url;
+          //   });
+
+          //   const data = await req.body;
+
+          //   await News.update(
+          //     {
+          //       title: data.title,
+          //       content: data.content,
+          //       summary: data.summary,
+          //       image: response,
+          //       categoryId: data.categoryId,
+          //     },
+          //     {
+          //       where: {
+          //         id: id,
+          //       },
+          //     }
+          //   );
+
+          //   res.status(201).json({ message: "News updated" });
+          // }
         } else {
           res.status(401).json({ message: "Creator only" });
         }
@@ -483,6 +520,45 @@ module.exports = {
       res.status(401).json({ message: "Token Required" });
     }
   },
+
+  //  addLikeToNews = async (req, res) => {
+  //     const auth = req.headers.authorization;
+  //     if (auth) {
+  //       const id = req.params.id;
+  //       const token = auth.split(" ")[1];
+  //       const verified = jwt.verify(token, process.env.JWTKEY);
+  //       if (verified) {
+  //         const news = await News.findOne({ where: { id } });
+  //         if (news) {
+  //           let newTotalLike = news.total_like;
+  //           if (req.body.like) {
+  //             if (!news.likes.includes(verified.id)) { // if user hasn't already liked this article
+  //               newTotalLike++;
+  //               await news.update({ likes: [...news.likes, verified.id], total_like: newTotalLike }); // add user's id to likes array and increment total_like
+  //               res.status(200).json({ message: "News liked" });
+  //             } else { // if user has already liked this article
+  //               res.status(400).json({ message: "You have already liked this article" });
+  //             }
+  //           } else { // if unlike button clicked
+  //             if (news.likes.includes(verified.id)) { // if user has already liked this article
+  //               newTotalLike--;
+  //               const newLikes = news.likes.filter(like => like !== verified.id); // remove user's id from likes array
+  //               await news.update({ likes: newLikes, total_like: newTotalLike }); // update likes array and total_like
+  //               res.status(200).json({ message: "News unliked" });
+  //             } else { // if user hasn't liked this article yet
+  //               res.status(400).json({ message: "You haven't liked this article yet" });
+  //             }
+  //           }
+  //         } else {
+  //           res.status(404).json({ message: "News not found" });
+  //         }
+  //       } else {
+  //         res.status(401).json({ message: "Unauthorized" });
+  //       }
+  //     } else {
+  //       res.status(401).json({ message: "Token Required" });
+  //     }
+  //   },
 
   searchNewsByTitle: async (req, res) => {
     const title = req.query.title;
