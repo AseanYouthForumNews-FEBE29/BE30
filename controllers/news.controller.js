@@ -133,33 +133,31 @@ module.exports = {
       const id = await req.params.id;
       const token = await auth.split(" ")[1];
       const verified = jwt.verify(token, process.env.JWTKEY);
-
+  
       if (verified) {
         const news = await News.findByPk(id);
-
+  
         if (news.userId == verified.id) {
           const uploaded_image = await req.file;
-
           const data = await req.body;
-          let image = await news.image;
-
+          let image = news.image;
+  
           if (uploaded_image) {
             const name_uploaded_image =
               (await uploaded_image.originalname.split(".")[0]) +
               "-" +
               new Date().getTime();
-
+  
             const options = {
               apiKey: process.env.IMGBBKEY,
               name: name_uploaded_image,
               base64string: uploaded_image.buffer.toString("base64"),
             };
-
-            let image = await imgbbUploader(options).then((res) => {
-              return res.url;
-            });
+  
+            const uploaded = await imgbbUploader(options);
+            image = uploaded.url;
           }
-
+  
           await News.update(
             {
               title: data.title,
@@ -174,46 +172,9 @@ module.exports = {
               },
             }
           );
-
+  
           res.status(201).json({ message: "News updated" });
-
-          // if (uploaded_image == null) {
-          //   res.status(422).json({ message: "Missing Image Value" });
-          // } else {
-          //   const name_uploaded_image =
-          //     (await uploaded_image.originalname.split(".")[0]) +
-          //     "-" +
-          //     new Date().getTime();
-
-          //   const options = {
-          //     apiKey: process.env.IMGBBKEY,
-          //     name: name_uploaded_image,
-          //     base64string: uploaded_image.buffer.toString("base64"),
-          //   };
-
-          //   const response = await imgbbUploader(options).then((res) => {
-          //     return res.url;
-          //   });
-
-          //   const data = await req.body;
-
-          //   await News.update(
-          //     {
-          //       title: data.title,
-          //       content: data.content,
-          //       summary: data.summary,
-          //       image: response,
-          //       categoryId: data.categoryId,
-          //     },
-          //     {
-          //       where: {
-          //         id: id,
-          //       },
-          //     }
-          //   );
-
-          //   res.status(201).json({ message: "News updated" });
-          // }
+  
         } else {
           res.status(401).json({ message: "Creator only" });
         }
@@ -224,6 +185,7 @@ module.exports = {
       res.status(401).json({ message: "Token Required" });
     }
   },
+  
 
   deleteNewsByIdUser: async (req, res) => {
     const auth = await req.headers.authorization;
