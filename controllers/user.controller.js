@@ -106,7 +106,17 @@ module.exports = {
       if (verified) {
         const uploaded_image = await req.file;
 
-        let image = null;
+        const user = await User.findOne({
+          where: {
+            id: verified.id,
+          },
+          include: {
+            model: UserDetail,
+            attributes: ["image"],
+          },
+        });
+        let image = user.UserDetail.image;
+
         if (uploaded_image) {
           const name_uploaded_image =
             (await uploaded_image.originalname.split(".")[0]) +
@@ -121,17 +131,6 @@ module.exports = {
 
           const uploaded = await imgbbUploader(options);
           image = uploaded.url;
-        } else {
-          const user = await User.findOne({
-            where: {
-              id: verified.id,
-            },
-            include: {
-              model: UserDetail,
-              attributes: ["image"],
-            },
-          });
-          image = user.UserDetail.image;
         }
 
         const data = await req.body;
