@@ -73,7 +73,7 @@ module.exports = {
                   model: Country,
                 },
               ],
-            }
+            },
           ],
         });
 
@@ -106,9 +106,8 @@ module.exports = {
       if (verified) {
         const uploaded_image = await req.file;
 
-        if (uploaded_image == null) {
-          res.status(422).json({ message: "Missing Image Value" });
-        } else {
+        let image = null;
+        if (uploaded_image) {
           const name_uploaded_image =
             (await uploaded_image.originalname.split(".")[0]) +
             "-" +
@@ -120,42 +119,43 @@ module.exports = {
             base64string: uploaded_image.buffer.toString("base64"),
           };
 
-          const response = await imgbbUploader(options).then((res) => {
-            return res.url;
-          });
+          const uploaded = await imgbbUploader(options);
+          image = uploaded.url;
 
-          const data = await req.body;
-          const saltRounds = 10;
-
-          const hash = bcrypt.hashSync(data.password, saltRounds);
-          data.password = hash;
-
-          await User.update(
-            {
-              email: data.email,
-              password: data.password,
-            },
-            {
-              where: {
-                id: verified.id,
-              },
-            }
-          );
-
-          await UserDetail.update(
-            {
-              fullName: data.fullName,
-              countryId: data.countryId,
-              image: response,
-            },
-            {
-              where: {
-                userId: verified.id,
-              },
-            }
-          );
-          res.status(201).json({ message: "Update success" });
+          image = response;
         }
+
+        const data = await req.body;
+        const saltRounds = 10;
+
+        const hash = bcrypt.hashSync(data.password, saltRounds);
+        data.password = hash;
+
+        await User.update(
+          {
+            email: data.email,
+            password: data.password,
+          },
+          {
+            where: {
+              id: verified.id,
+            },
+          }
+        );
+
+        await UserDetail.update(
+          {
+            fullName: data.fullName,
+            countryId: data.countryId,
+            image: image,
+          },
+          {
+            where: {
+              userId: verified.id,
+            },
+          }
+        );
+        res.status(201).json({ message: "Update success" });
       } else {
         res.status(401).json({ message: "Unauthorized" });
       }
@@ -163,4 +163,72 @@ module.exports = {
       res.status(401).json({ message: "Token Required" });
     }
   },
+
+  // updateUserById: async (req, res) => {
+  //   const auth = await req.headers.authorization;
+
+  //   if (auth) {
+  //     const token = await auth.split(" ")[1];
+  //     const verified = jwt.verify(token, process.env.JWTKEY);
+
+  //     if (verified) {
+  //       const uploaded_image = await req.file;
+
+  //       if (uploaded_image == null) {
+  //         res.status(422).json({ message: "Missing Image Value" });
+  //       } else {
+  //         const name_uploaded_image =
+  //           (await uploaded_image.originalname.split(".")[0]) +
+  //           "-" +
+  //           new Date().getTime();
+
+  //         const options = {
+  //           apiKey: process.env.IMGBBKEY,
+  //           name: name_uploaded_image,
+  //           base64string: uploaded_image.buffer.toString("base64"),
+  //         };
+
+  //         const response = await imgbbUploader(options).then((res) => {
+  //           return res.url;
+  //         });
+
+  //         const data = await req.body;
+  //         const saltRounds = 10;
+
+  //         const hash = bcrypt.hashSync(data.password, saltRounds);
+  //         data.password = hash;
+
+  //         await User.update(
+  //           {
+  //             email: data.email,
+  //             password: data.password,
+  //           },
+  //           {
+  //             where: {
+  //               id: verified.id,
+  //             },
+  //           }
+  //         );
+
+  //         await UserDetail.update(
+  //           {
+  //             fullName: data.fullName,
+  //             countryId: data.countryId,
+  //             image: response,
+  //           },
+  //           {
+  //             where: {
+  //               userId: verified.id,
+  //             },
+  //           }
+  //         );
+  //         res.status(201).json({ message: "Update success" });
+  //       }
+  //     } else {
+  //       res.status(401).json({ message: "Unauthorized" });
+  //     }
+  //   } else {
+  //     res.status(401).json({ message: "Token Required" });
+  //   }
+  // },
 };
