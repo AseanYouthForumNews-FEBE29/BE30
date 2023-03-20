@@ -121,8 +121,17 @@ module.exports = {
 
           const uploaded = await imgbbUploader(options);
           image = uploaded.url;
-
-          image = response;
+        } else {
+          const user = await User.findOne({
+            where: {
+              id: verified.id,
+            },
+            include: {
+              model: UserDetail,
+              attributes: ["image"],
+            },
+          });
+          image = user.UserDetail.image;
         }
 
         const data = await req.body;
