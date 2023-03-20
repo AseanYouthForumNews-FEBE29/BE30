@@ -145,6 +145,7 @@ module.exports = {
           await UserDetail.update(
             {
               fullName: data.fullName,
+              countryId: data.countryId,
               image: response,
             },
             {
