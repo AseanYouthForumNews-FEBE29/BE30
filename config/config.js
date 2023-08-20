@@ -1,5 +1,34 @@
 require('dotenv').config()
 
+// module.exports = {
+//   "development": {
+//     "username": "root",
+//     "password": 'root',
+//     "database": "db_ayfn",
+//     "host": "127.0.0.1",
+//     "dialect": "mysql",
+//     "port"   : "3306",
+
+//   },
+//   "test": {
+//     "username": "root",
+//     "password": 'root',
+//     "database": "db_ayfn",
+//     "host": "127.0.0.1",
+//     "dialect": "mysql",
+//     "port"   : "3000",
+//   },
+//   "production": {
+//     "username": "root",
+//     "password": 'root',
+//     "database": "db_ayfn",
+//     "host": "127.0.0.1",
+//     "dialect": "mysql",
+//     "port"   : "3000",
+//   }
+// }
+
+
 module.exports = {
   "development": {
     "username": process.env.DB_USERNAME,
@@ -25,3 +54,7 @@ module.exports = {
     "port": process.env.DB_PORT
   }
 }
+
+
+
+
